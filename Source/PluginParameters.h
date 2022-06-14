@@ -15,7 +15,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class AudioPluginAudioProcessor;
+class BiLinearEQAudioProcessor;
 
 class Parameters
 {
@@ -24,7 +24,7 @@ public:
     using Params = juce::AudioProcessorValueTreeState::ParameterLayout;
     //==========================================================================
     /** Constructor. */
-    Parameters(AudioPluginAudioProcessor& p, APVTS& apvts);
+    Parameters(BiLinearEQAudioProcessor& p, APVTS& apvts);
 
     //==========================================================================
     /** Create Parameter Layout. */
@@ -34,7 +34,7 @@ private:
     //==========================================================================
     // This reference is provided as a quick way for the wrapper to
     // access the processor object that created it.
-    AudioPluginAudioProcessor& audioProcessor;
+    BiLinearEQAudioProcessor& audioProcessor;
     APVTS& state;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Parameters)
