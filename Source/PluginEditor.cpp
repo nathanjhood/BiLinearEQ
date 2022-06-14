@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor& p, APVTS& apvts, juce::UndoManager& um)
+BiLinearEQAudioProcessorEditor::BiLinearEQAudioProcessorEditor(BiLinearEQAudioProcessor& p, APVTS& apvts, juce::UndoManager& um)
     :
     juce::AudioProcessorEditor(&p),
     audioProcessor(p),
@@ -32,19 +32,19 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
     startTimerHz(60);
 }
 
-AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
+BiLinearEQAudioProcessorEditor::~BiLinearEQAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void AudioPluginAudioProcessorEditor::timerCallback()
+void BiLinearEQAudioProcessorEditor::timerCallback()
 {
     //subComponents.resized();
     //undoButton.resized();
     //redoButton.resized();
 }
 
-void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
+void BiLinearEQAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll(juce::Colours::darkslategrey);
@@ -61,7 +61,7 @@ void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawFittedText(ProjectInfo::versionString, getLocalBounds(), juce::Justification::bottomLeft, 1);
 }
 
-void AudioPluginAudioProcessorEditor::resized()
+void BiLinearEQAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
