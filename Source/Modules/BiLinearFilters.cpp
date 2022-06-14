@@ -113,7 +113,7 @@ void BiLinearFilters<SampleType>::prepare(juce::dsp::ProcessSpec& spec)
 template <typename SampleType>
 void BiLinearFilters<SampleType>::reset(SampleType initialValue)
 {
-    for (auto v : { &Wn_1, &Xn_1, &Yn_1 })
+    for (auto v : { &Wn_1, &Xn_1, &Yn_1, })
         std::fill(v->begin(), v->end(), initialValue);
 
     frq.reset(sampleRate, rampDurationSeconds);
@@ -180,21 +180,33 @@ SampleType BiLinearFilters<SampleType>::directFormII(int channel, SampleType inp
     return Yn;
 }
 
+//template <typename SampleType>
+//SampleType BiLinearFilters<SampleType>::directFormITransposedDecramped???(int channel, SampleType inputValue)
+//{
+//    auto& Wn1 = Wn_1[(size_t)channel];
+//
+//    SampleType Xn = inputValue;
+//
+//    SampleType Wn = (Xn + Wn1);
+//    SampleType Yn = ((Wn * b0) + (Wn * b1));
+//
+//    Wn1 = (Wn * a1);
+//
+//    return Yn;
+//}
+
 template <typename SampleType>
 SampleType BiLinearFilters<SampleType>::directFormITransposed(int channel, SampleType inputValue)
 {
     auto& Wn1 = Wn_1[(size_t)channel];
-    //auto& Wn2 = Wn_2[(size_t)channel];
-    auto& Xn1 = Xn_1[(size_t)channel];
-    //auto& Xn2 = Xn_2[(size_t)channel];
+    auto& Yn1 = Yn_1[(size_t)channel];
 
     SampleType Xn = inputValue;
 
-    SampleType Wn = (Xn + Wn2);
-    SampleType Yn = ((Wn * b0) + Xn2);
+    SampleType Wn = (Xn + Wn1);
+    SampleType Yn = ((Wn * b0) + Yn1);
 
-    Xn2 = ((Wn * b1) + Xn1), Wn2 = ((Wn * a1) + Wn1);
-    Xn1 = (Wn * b2), Wn1 = (Wn * a2);
+    Wn1 = (Wn * a1), Yn1 = ((Wn * b1));
 
     return Yn;
 }
@@ -203,14 +215,12 @@ template <typename SampleType>
 SampleType BiLinearFilters<SampleType>::directFormIITransposed(int channel, SampleType inputValue)
 {
     auto& Xn1 = Xn_1[(size_t)channel];
-    //auto& Xn2 = Xn_2[(size_t)channel];
 
     SampleType Xn = inputValue;
 
-    SampleType Yn = (Xn * b0);
+    SampleType Yn = ((Xn * b0) + Xn1);
 
-    //Xn2 = ((Xn * b1) + (Xn1)+(Yn * a1));
-    Xn1 = ((Xn * b2) + (Yn * a2));
+    Xn1 = ((Xn * b1) + (Yn * a1));
 
     return Yn;
 }
