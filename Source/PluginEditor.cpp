@@ -21,13 +21,14 @@ BiLinearEQAudioProcessorEditor::BiLinearEQAudioProcessorEditor(BiLinearEQAudioPr
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 
-    setSize (350, 400);
+    
     addAndMakeVisible(subComponents);
     addAndMakeVisible(undoButton);
     addAndMakeVisible(redoButton);
     undoButton.onClick = [this] { undoManager.undo(); };
     redoButton.onClick = [this] { undoManager.redo(); };
     setResizable(true, true);
+    setSize(650, 300);
 
     startTimerHz(60);
 }
