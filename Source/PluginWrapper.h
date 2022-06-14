@@ -51,7 +51,7 @@ private:
     //==========================================================================
     /** Instantiate objects. */
     juce::dsp::ProcessSpec spec;
-    BiLinearFilters<SampleType> filters;
+    BiLinearFilters<SampleType> hpFilter, lpFilter, lsFilter, hsFilter;
     juce::dsp::DryWetMixer<SampleType> mixer;
     juce::dsp::Gain<SampleType> output;
 
@@ -61,10 +61,15 @@ private:
     juce::AudioParameterFloat* mixPtr { nullptr };
     juce::AudioParameterBool* bypassPtr { nullptr };
 
-    juce::AudioParameterFloat* freqPtr { nullptr };
-    juce::AudioParameterFloat* gainPtr { nullptr };
-    juce::AudioParameterChoice* typePtr { nullptr };
-    juce::AudioParameterChoice* transformPtr { nullptr };
+    juce::AudioParameterFloat* hpFreqPtr { nullptr };
+
+    juce::AudioParameterFloat* lsFreqPtr { nullptr };
+    juce::AudioParameterFloat* lsGainPtr { nullptr };
+
+    juce::AudioParameterFloat* hsFreqPtr { nullptr };
+    juce::AudioParameterFloat* hsGainPtr { nullptr };
+
+    juce::AudioParameterFloat* lpFreqPtr{ nullptr };
 
     //==========================================================================
     /** Init variables. */
