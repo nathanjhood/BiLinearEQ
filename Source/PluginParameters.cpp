@@ -57,11 +57,10 @@ void Parameters::setParameterLayout(Params& params)
 
     params.add
         //======================================================================
-        (std::make_unique<juce::AudioProcessorParameterGroup>("BandOneID", "0", "seperator1",
+        (std::make_unique<juce::AudioProcessorParameterGroup>("filtersID", "1", "seperator1",
             //==================================================================
-            std::make_unique<juce::AudioParameterFloat>("frequencyID", "Frequency", freqRange, 632.455f, frequency, genParam),
-            std::make_unique<juce::AudioParameterFloat>("gainID", "Gain", gainRange, 00.00f, decibels, genParam),
-            std::make_unique<juce::AudioParameterChoice>("typeID", "Type", fString, 0)
+            std::make_unique<juce::AudioParameterFloat>("hpFrequencyID", "HP", freqRange, 632.455f, frequency, genParam),
+            std::make_unique<juce::AudioParameterFloat>("lpFrequencyID", "LP", freqRange, 632.455f, frequency, genParam)
             //==================================================================
             ));
 }
