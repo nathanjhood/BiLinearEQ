@@ -15,14 +15,14 @@
 //==============================================================================
 /**
 */
-class AudioPluginAudioProcessor  : public juce::AudioProcessor
+class BiLinearEQAudioProcessor  : public juce::AudioProcessor
 {
 public:
     using APVTS = juce::AudioProcessorValueTreeState;
     using precisionType = ProcessingPrecision;
     //==========================================================================
-    AudioPluginAudioProcessor();
-    ~AudioPluginAudioProcessor() override;
+    BiLinearEQAudioProcessor();
+    ~BiLinearEQAudioProcessor() override;
 
     //==========================================================================
     juce::AudioProcessorParameter* getBypassParameter() const override;
@@ -95,5 +95,5 @@ private:
     /** Init variables. */
     precisionType processingPrecision = precisionType::singlePrecision;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BiLinearEQAudioProcessor)
 };
