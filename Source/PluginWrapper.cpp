@@ -24,6 +24,12 @@ ProcessWrapper<SampleType>::ProcessWrapper(BiLinearEQAudioProcessor& p, APVTS& a
 
     hpFreqPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("hpFrequencyID"));
 
+    lsFreqPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("lsFrequencyID"));
+    lsGainPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("lsGainID"));
+
+    hsFreqPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("hsFrequencyID"));
+    hsGainPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("hsGainID"));
+
     lpFreqPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("lpFrequencyID"));
 
     jassert(outputPtr != nullptr);
@@ -34,9 +40,13 @@ ProcessWrapper<SampleType>::ProcessWrapper(BiLinearEQAudioProcessor& p, APVTS& a
     jassert(lpFreqPtr != nullptr);
 
     hpFilter.setFilterType(FilterType::highPass);
+    lsFilter.setFilterType(FilterType::lowShelf);
+    hsFilter.setFilterType(FilterType::highShelf);
     lpFilter.setFilterType(FilterType::lowPass);
 
     hpFilter.setTransformType(TransformationType::directFormIItransposed);
+    lsFilter.setTransformType(TransformationType::directFormIItransposed);
+    hsFilter.setTransformType(TransformationType::directFormIItransposed);
     lpFilter.setTransformType(TransformationType::directFormIItransposed);
 }
 
@@ -49,6 +59,8 @@ void ProcessWrapper<SampleType>::prepare()
 
     mixer.prepare(spec);
     hpFilter.prepare(spec);
+    lsFilter.prepare(spec);
+    hsFilter.prepare(spec);
     lpFilter.prepare(spec);
     output.prepare(spec);
 
@@ -61,6 +73,8 @@ void ProcessWrapper<SampleType>::reset()
 {
     mixer.reset();
     hpFilter.reset(static_cast<SampleType>(0.0));
+    lsFilter.reset(static_cast<SampleType>(0.0));
+    hsFilter.reset(static_cast<SampleType>(0.0));
     lpFilter.reset(static_cast<SampleType>(0.0));
     output.reset();
 }
@@ -82,7 +96,8 @@ void ProcessWrapper<SampleType>::process(juce::AudioBuffer<SampleType>& buffer, 
     context.isBypassed = bypassPtr->get();
 
     hpFilter.process(context);
-
+    lsFilter.process(context);
+    hsFilter.process(context);
     lpFilter.process(context);
 
     output.process(context);
@@ -100,8 +115,12 @@ void ProcessWrapper<SampleType>::update()
     mixer.setWetMixProportion(mixPtr->get() * 0.01f);
 
     hpFilter.setFrequency(hpFreqPtr->get());
-
+    lsFilter.setFrequency(lsFreqPtr->get());
+    hsFilter.setFrequency(hsFreqPtr->get());
     lpFilter.setFrequency(lpFreqPtr->get());
+
+    lsFilter.setGain(lsGainPtr->get());
+    hsFilter.setGain(hsGainPtr->get());
 
     output.setGainLinear(juce::Decibels::decibelsToGain(outputPtr->get()));
 }
