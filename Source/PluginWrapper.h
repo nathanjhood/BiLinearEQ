@@ -41,21 +41,12 @@ public:
     /** Updates the internal state variables of the processor. */
     void update();
 
-    //==========================================================================
-    /** Sets the oversampling factor. */
-    void setOversampling();
-
-    SampleType getLatencySamples() const noexcept;
-
 private:
     //==========================================================================
     // This reference is provided as a quick way for the wrapper to
     // access the processor object that created it.
     BiLinearEQAudioProcessor& audioProcessor;
     APVTS& state;
-
-    //==========================================================================
-    std::unique_ptr<juce::dsp::Oversampling<SampleType>> oversampling[5];
 
     //==========================================================================
     /** Instantiate objects. */
@@ -66,15 +57,17 @@ private:
 
     //==========================================================================
     /** Parameter pointers. */
-
-    juce::AudioParameterChoice* osPtr { nullptr };
     juce::AudioParameterFloat* outputPtr { nullptr };
     juce::AudioParameterFloat* mixPtr { nullptr };
     juce::AudioParameterBool* bypassPtr { nullptr };
 
+    juce::AudioParameterFloat* freqPtr { nullptr };
+    juce::AudioParameterFloat* gainPtr { nullptr };
+    juce::AudioParameterChoice* typePtr { nullptr };
+    juce::AudioParameterChoice* transformPtr { nullptr };
+
     //==========================================================================
     /** Init variables. */
-    int newOS = 0, oldOS = 0, oversamplingFactor = 1;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ProcessWrapper)
 };
