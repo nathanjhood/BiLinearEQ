@@ -15,8 +15,28 @@ Coffee! That's how I get things done!! If you'd like to see me get more things d
 # Manual - v1.0.0b
 
 + coming soon!
-+ 
+
 ...stay tuned for more!
+
+For now: the implementation of this eventual mixing plugin is a set of 1st-order filters; high pass, low pass, high shelf, and low shelf. Each filter type has a frequency control (currently 20 - 20,000Hz un.stepped, but subject to change) and the shelves both have a gain control (+/- 30.01dB un-stepped - likely not to change). These are complemented by an output gain control and dry/wet mixer (with processing applied in that order). It is possible that another filter band or two might make it's way into the design before it takes it's final form (possibly to directly address mid-range) along with an optional 2-nd order mode for each band (and per-band bypass... lots to be done), but there are several main purposes of this equalizer design which call for the 1st-order filter design which provides only a small set of output characteristic types;
+
+On a musical level;
+
++ Gentle manipulation of broadband audio material
++ Possibility of "complementary" curves for emphasis/de-emphasis audio processing techniques (think Dolby)
++ Absolutely "spec-perfect" filter centre-frequency behaviour (although currently subject to HF digital cramping - TBA)
++ Mastering-grade processing precision, whether using a Floats or Doubles architecture
+
+On a DSP level;
+
++ Creation of a robust and durable single-pole "building block" "ideal" filter for laddering, ballistics, smoothing, and furthermore obscure uses
++ Possibility of investigating various de-cramping methods in a more controllable and predictable architecture (being a simple 1-pole structure)
++ Possibility of exploring non-linearities in and around the feedback path
++ Possibility of implementing as an integrator/differentiator for furthermore obscure DSP purposes
+
+In the pursuit of a useful musical tool, I hope to further strengthen my current JUCE plugin template and make some strong additions to my DSP codebase that, in conjunction with several of my other existing projects, will open up the path to some very high-quality effects processors which I've already successfully breadboarded using more "stock" parts from the JUCE library. There is a kit of ground to be covered before I can consider an implementation of BiLinearEQ to be "complete", and much of that is not DSP-related at all (indeed most of the DSP is ready to go).
+
+I will try to take some breaks inbetween GUI work and other errands in order to provide some interesting write-ups on the core module at play here - and the many myriad use cases that module has ahead :) - but life is generally busy and I only do this in my spare time, so please stay tuned :)
 
 - Nathan (StoneyDSP) June 2022
 
