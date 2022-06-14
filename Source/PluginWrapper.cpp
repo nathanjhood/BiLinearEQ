@@ -12,7 +12,7 @@
 #include "PluginProcessor.h"
 
 template <typename SampleType>
-ProcessWrapper<SampleType>::ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& apvts) : audioProcessor(p), state(apvts)
+ProcessWrapper<SampleType>::ProcessWrapper(BiLinearEQAudioProcessor& p, APVTS& apvts) : audioProcessor(p), state(apvts)
 {
 
     spec.sampleRate = audioProcessor.getSampleRate();
@@ -22,7 +22,7 @@ ProcessWrapper<SampleType>::ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& 
     auto osFilter = juce::dsp::Oversampling<SampleType>::filterHalfBandPolyphaseIIR;
 
     for (int i = 0; i < 5; ++i)
-        overSample[i] = std::make_unique<juce::dsp::Oversampling<SampleType>>
+        oversampling[i] = std::make_unique<juce::dsp::Oversampling<SampleType>>
         (spec.numChannels, i, osFilter, true, false);
 
     osPtr = dynamic_cast <juce::AudioParameterChoice*> (state.getParameter("osID"));
@@ -39,18 +39,18 @@ ProcessWrapper<SampleType>::ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& 
 template <typename SampleType>
 void ProcessWrapper<SampleType>::prepare()
 {
-    overSamplingFactor = 1 << curOS;
-    prevOS = curOS;
+    oversamplingFactor = 1 << newOS;
+    oldOS = newOS;
 
-    spec.sampleRate = audioProcessor.getSampleRate() * overSamplingFactor;
+    spec.sampleRate = audioProcessor.getSampleRate() * oversamplingFactor;
     spec.maximumBlockSize = audioProcessor.getBlockSize();
     spec.numChannels = audioProcessor.getTotalNumInputChannels();
 
     for (int i = 0; i < 5; ++i)
-        overSample[i]->initProcessing(spec.maximumBlockSize);
+        oversampling[i]->initProcessing(spec.maximumBlockSize);
 
     for (int i = 0; i < 5; ++i)
-        overSample[i]->numChannels = (size_t)spec.numChannels;
+        oversampling[i]->numChannels = (size_t)spec.numChannels;
 
     mixer.prepare(spec);
     output.prepare(spec);
@@ -63,10 +63,10 @@ template <typename SampleType>
 void ProcessWrapper<SampleType>::reset()
 {
     for (int i = 0; i < 5; ++i)
-        overSample[i]->numChannels = (size_t)spec.numChannels;
+        oversampling[i]->numChannels = (size_t)spec.numChannels;
 
     for (int i = 0; i < 5; ++i)
-        overSample[i]->reset();
+        oversampling[i]->reset();
 
     mixer.reset();
     mixer.setWetLatency(getLatencySamples());
@@ -86,15 +86,17 @@ void ProcessWrapper<SampleType>::process(juce::AudioBuffer<SampleType>& buffer, 
 
     mixer.pushDrySamples(block);
 
-    osBlock = overSample[curOS]->processSamplesUp(block);
+    osBlock = oversampling[newOS]->processSamplesUp(block);
 
     auto context = juce::dsp::ProcessContextReplacing(osBlock);
 
     context.isBypassed = bypassPtr->get();
 
+    filters(context);
+
     output.process(context);
 
-    overSample[curOS]->processSamplesDown(block);
+    oversampling[newOS]->processSamplesDown(block);
 
     mixer.mixWetSamples(block);
 }
@@ -102,7 +104,7 @@ void ProcessWrapper<SampleType>::process(juce::AudioBuffer<SampleType>& buffer, 
 template <typename SampleType>
 void ProcessWrapper<SampleType>::update()
 {
-    spec.sampleRate = audioProcessor.getSampleRate() * overSamplingFactor;
+    spec.sampleRate = audioProcessor.getSampleRate() * oversamplingFactor;
     spec.maximumBlockSize = audioProcessor.getBlockSize();
     spec.numChannels = audioProcessor.getTotalNumInputChannels();
     
@@ -116,11 +118,11 @@ void ProcessWrapper<SampleType>::update()
 template <typename SampleType>
 void ProcessWrapper<SampleType>::setOversampling()
 {
-    curOS = (int)osPtr->getIndex();
-    if (curOS != prevOS)
+    newOS = (int)osPtr->getIndex();
+    if (newOS != oldOS)
     {
-        overSamplingFactor = 1 << curOS;
-        prevOS = curOS;
+        oversamplingFactor = 1 << newOS;
+        oldOS = newOS;
         mixer.reset();
         mixer.setWetLatency(getLatencySamples());
         output.reset();
@@ -131,7 +133,7 @@ template <typename SampleType>
 SampleType ProcessWrapper<SampleType>::getLatencySamples() const noexcept
 {
     // latency of oversampling
-    return overSample[curOS]->getLatencyInSamples();
+    return oversampling[newOS]->getLatencyInSamples();
 }
 
 //==============================================================================

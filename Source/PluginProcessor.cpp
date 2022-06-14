@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-AudioPluginAudioProcessor::AudioPluginAudioProcessor() : 
+BiLinearEQAudioProcessor::BiLinearEQAudioProcessor() :
     AudioProcessor(BusesProperties().withInput("Input",     juce::AudioChannelSet::stereo(), true)
                                     .withOutput("Output",   juce::AudioChannelSet::stereo(), true)),
     apvts (*this, &undoManager, "Parameters", createParameterLayout())
@@ -19,32 +19,32 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor() :
     jassert(bypassPtr != nullptr);
 }
 
-AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
+BiLinearEQAudioProcessor::~BiLinearEQAudioProcessor()
 {
 }
 
 //==============================================================================
-juce::AudioProcessorParameter* AudioPluginAudioProcessor::getBypassParameter() const
+juce::AudioProcessorParameter* BiLinearEQAudioProcessor::getBypassParameter() const
 {
     return bypassPtr;
 }
 
-bool AudioPluginAudioProcessor::supportsDoublePrecisionProcessing() const
+bool BiLinearEQAudioProcessor::supportsDoublePrecisionProcessing() const
 {
     return true;
 }
 
-juce::AudioProcessor::ProcessingPrecision AudioPluginAudioProcessor::getProcessingPrecision() const noexcept
+juce::AudioProcessor::ProcessingPrecision BiLinearEQAudioProcessor::getProcessingPrecision() const noexcept
 {
     return processingPrecision;
 }
 
-bool AudioPluginAudioProcessor::isUsingDoublePrecision() const noexcept
+bool BiLinearEQAudioProcessor::isUsingDoublePrecision() const noexcept
 {
     return processingPrecision == doublePrecision;
 }
 
-void AudioPluginAudioProcessor::setProcessingPrecision(ProcessingPrecision newPrecision) noexcept
+void BiLinearEQAudioProcessor::setProcessingPrecision(ProcessingPrecision newPrecision) noexcept
 {
     if (processingPrecision != newPrecision)
     {
@@ -55,61 +55,61 @@ void AudioPluginAudioProcessor::setProcessingPrecision(ProcessingPrecision newPr
 }
 
 //==============================================================================
-const juce::String AudioPluginAudioProcessor::getName() const
+const juce::String BiLinearEQAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool AudioPluginAudioProcessor::acceptsMidi() const
+bool BiLinearEQAudioProcessor::acceptsMidi() const
 {
     return false;
 }
 
-bool AudioPluginAudioProcessor::producesMidi() const
+bool BiLinearEQAudioProcessor::producesMidi() const
 {
     return false;
 }
 
-bool AudioPluginAudioProcessor::isMidiEffect() const
+bool BiLinearEQAudioProcessor::isMidiEffect() const
 {
     return false;
 }
 
-double AudioPluginAudioProcessor::getTailLengthSeconds() const
+double BiLinearEQAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int AudioPluginAudioProcessor::getNumPrograms()
+int BiLinearEQAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int AudioPluginAudioProcessor::getCurrentProgram()
+int BiLinearEQAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void AudioPluginAudioProcessor::setCurrentProgram (int index)
+void BiLinearEQAudioProcessor::setCurrentProgram (int index)
 {
     juce::ignoreUnused(index);
 }
 
-const juce::String AudioPluginAudioProcessor::getProgramName (int index)
+const juce::String BiLinearEQAudioProcessor::getProgramName (int index)
 {
     juce::ignoreUnused(index);
     return {};
 }
 
-void AudioPluginAudioProcessor::changeProgramName (int index, const juce::String& newName)
+void BiLinearEQAudioProcessor::changeProgramName (int index, const juce::String& newName)
 {
     juce::ignoreUnused(index);
     juce::ignoreUnused(newName);
 }
 
 //==============================================================================
-void AudioPluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
+void BiLinearEQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..    
@@ -120,7 +120,7 @@ void AudioPluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPerB
     processorDouble.prepare();
 }
 
-void AudioPluginAudioProcessor::releaseResources()
+void BiLinearEQAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
@@ -129,7 +129,7 @@ void AudioPluginAudioProcessor::releaseResources()
     processorDouble.reset();
 }
 
-void AudioPluginAudioProcessor::numChannelsChanged()
+void BiLinearEQAudioProcessor::numChannelsChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
@@ -137,7 +137,7 @@ void AudioPluginAudioProcessor::numChannelsChanged()
     processorDouble.prepare();
 }
 
-void AudioPluginAudioProcessor::numBusesChanged()
+void BiLinearEQAudioProcessor::numBusesChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
@@ -145,7 +145,7 @@ void AudioPluginAudioProcessor::numBusesChanged()
     processorDouble.prepare();
 }
 
-void AudioPluginAudioProcessor::processorLayoutsChanged()
+void BiLinearEQAudioProcessor::processorLayoutsChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
@@ -153,7 +153,7 @@ void AudioPluginAudioProcessor::processorLayoutsChanged()
     processorDouble.prepare();
 }
 
-bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool BiLinearEQAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
     // This is the place where you check if the layout is supported.
     // In this template code we only support mono or stereo.
@@ -171,7 +171,7 @@ bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
 }
 
 //==============================================================================
-void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void BiLinearEQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     if (bypassPtr->get() == false)
     {
@@ -186,7 +186,7 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, j
     }
 }
 
-void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
+void BiLinearEQAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
 {
     if (bypassPtr->get() == false)
     {
@@ -202,30 +202,30 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, 
     
 }
 
-void AudioPluginAudioProcessor::processBlockBypassed(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void BiLinearEQAudioProcessor::processBlockBypassed(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ignoreUnused(buffer);
     juce::ignoreUnused(midiMessages);
 }
 
-void AudioPluginAudioProcessor::processBlockBypassed(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
+void BiLinearEQAudioProcessor::processBlockBypassed(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ignoreUnused(buffer);
     juce::ignoreUnused(midiMessages);
 }
 
 //==============================================================================
-bool AudioPluginAudioProcessor::hasEditor() const
+bool BiLinearEQAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-juce::AudioProcessorEditor* AudioPluginAudioProcessor::createEditor()
+juce::AudioProcessorEditor* BiLinearEQAudioProcessor::createEditor()
 {
-    return new AudioPluginAudioProcessorEditor(*this, getAPVTS(), undoManager );
+    return new BiLinearEQAudioProcessorEditor(*this, getAPVTS(), undoManager );
 }
 
-juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::createParameterLayout()
+juce::AudioProcessorValueTreeState::ParameterLayout BiLinearEQAudioProcessor::createParameterLayout()
 {
     APVTS::ParameterLayout params;
 
@@ -235,7 +235,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::c
 }
 
 //==============================================================================
-void AudioPluginAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+void BiLinearEQAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
@@ -246,14 +246,14 @@ void AudioPluginAudioProcessor::getStateInformation (juce::MemoryBlock& destData
     copyXmlToBinary(*xml, destData);
 }
 
-void AudioPluginAudioProcessor::getCurrentProgramStateInformation(juce::MemoryBlock& destData)
+void BiLinearEQAudioProcessor::getCurrentProgramStateInformation(juce::MemoryBlock& destData)
 {
     auto state = apvts.copyState();
     std::unique_ptr<juce::XmlElement> xml(state.createXml());
     copyXmlToBinary(*xml, destData);
 }
 
-void AudioPluginAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void BiLinearEQAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
@@ -265,7 +265,7 @@ void AudioPluginAudioProcessor::setStateInformation (const void* data, int sizeI
             apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
 }
 
-void AudioPluginAudioProcessor::setCurrentProgramStateInformation(const void* data, int sizeInBytes)
+void BiLinearEQAudioProcessor::setCurrentProgramStateInformation(const void* data, int sizeInBytes)
 {
     std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
@@ -278,5 +278,5 @@ void AudioPluginAudioProcessor::setCurrentProgramStateInformation(const void* da
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new AudioPluginAudioProcessor();
+    return new BiLinearEQAudioProcessor();
 }
