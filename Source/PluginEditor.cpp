@@ -21,7 +21,7 @@ BiLinearEQAudioProcessorEditor::BiLinearEQAudioProcessorEditor(BiLinearEQAudioPr
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 
-    setSize (300, 400);
+    setSize (350, 400);
     addAndMakeVisible(subComponents);
     addAndMakeVisible(undoButton);
     addAndMakeVisible(redoButton);
@@ -39,15 +39,12 @@ BiLinearEQAudioProcessorEditor::~BiLinearEQAudioProcessorEditor()
 //==============================================================================
 void BiLinearEQAudioProcessorEditor::timerCallback()
 {
-    //subComponents.resized();
-    //undoButton.resized();
-    //redoButton.resized();
 }
 
 void BiLinearEQAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll(juce::Colours::darkslategrey);
+    g.fillAll(juce::Colours::darkslateblue);
 
     //// draw an outline around the component
     g.setColour(juce::Colours::black);
