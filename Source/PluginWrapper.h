@@ -14,9 +14,9 @@
 #define PLUGINWRAPPER_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Modules/Biquads.h"
+#include "Modules/BiLinearFilters.h"
 
-class AudioPluginAudioProcessor;
+class BiLinearEQAudioProcessor;
 
 template <typename SampleType>
 class ProcessWrapper
@@ -25,7 +25,7 @@ public:
     using APVTS = juce::AudioProcessorValueTreeState;
     //==========================================================================
     /** Constructor. */
-    ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& apvts);
+    ProcessWrapper(BiLinearEQAudioProcessor& p, APVTS& apvts);
 
     //==========================================================================
     /** Initialises the processor. */
@@ -51,15 +51,16 @@ private:
     //==========================================================================
     // This reference is provided as a quick way for the wrapper to
     // access the processor object that created it.
-    AudioPluginAudioProcessor& audioProcessor;
+    BiLinearEQAudioProcessor& audioProcessor;
     APVTS& state;
 
     //==========================================================================
-    std::unique_ptr<juce::dsp::Oversampling<SampleType>> overSample[5];
+    std::unique_ptr<juce::dsp::Oversampling<SampleType>> oversampling[5];
 
     //==========================================================================
     /** Instantiate objects. */
     juce::dsp::ProcessSpec spec;
+    BiLinearFilters<SampleType> filters;
     juce::dsp::DryWetMixer<SampleType> mixer;
     juce::dsp::Gain<SampleType> output;
 
@@ -73,7 +74,7 @@ private:
 
     //==========================================================================
     /** Init variables. */
-    int curOS = 0, prevOS = 0, overSamplingFactor = 1;
+    int newOS = 0, oldOS = 0, oversamplingFactor = 1;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ProcessWrapper)
 };
