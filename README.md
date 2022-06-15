@@ -25,7 +25,7 @@ On a musical level;
 + Gentle manipulation of broadband audio material
 + Possibility of "complementary" curves for emphasis/de-emphasis audio processing techniques (think Dolby)
 + Absolutely "spec-perfect" filter centre-frequency behaviour (although currently subject to HF digital cramping - TBA)
-+ Mastering-grade processing precision, whether using a Floats or Doubles architecture
++ Mastering-grade processing precision, regardless whether using a Floats or Doubles architecture
 
 On a DSP level;
 
@@ -34,7 +34,7 @@ On a DSP level;
 + Possibility of exploring non-linearities in and around the feedback path
 + Possibility of implementing as an integrator/differentiator for furthermore obscure DSP purposes
 
-*one very interesting technique to explore is to try setting the high and low pass filters at some frequency and then using the two shelves to "equalize" your sound by bringing the highs and lows back to where they were before the filtering. There is precisely enough gain to achieve this in most situations; for example, try setting both the high and low pass filters to 632.455hz (the centre position of the knob, and logarithmic mean of 20hz to 20, 000hz), the low shelf to 20hz, and the high shelf to 20,00hz. Now boost both of the shelves to full volume (+30.01dB). This should perfectly mitigate the majority of the filtering, except for the corner frequencies (as if you had set the filters to 20hz and 20,000hz but left the shelves at 0dB). The level of parity between filter types and parameter settings is precisely what this equalizer aims to expore, and to provide access to as a musical application.*
+*one very interesting technique to explore is to try setting the high and low pass filters at some frequency and then using the two shelves to "equalize" your sound by bringing the highs and lows back to where they were before the filtering. There is precisely enough gain to achieve this in most situations; for example, try setting both the high and low pass filters to 632.455hz (the centre position of the knob, and "logarithmic mean" of 20hz to 20,000hz), the low shelf to 20hz, and the high shelf to 20,000hz. Now boost both of the shelves to full volume (+30.01dB). This should perfectly mitigate the majority of the high and low pass filtering, except for the very corner frequencies (as if you had set the filters to 20hz and 20,000hz but left the shelves at 0dB). This interesting level of parity between filter types and parameter settings is precisely what this digital equalizer aims to explore, and to provide access to as a musical application.*
 
 In the pursuit of a useful musical tool, I hope to further strengthen my current JUCE plugin template and make some strong additions to my DSP codebase that, in conjunction with several of my other existing projects, will open up the path to some very high-quality effects processors which I've already successfully breadboarded using more "stock" parts from the JUCE library. There is a kit of ground to be covered before I can consider an implementation of BiLinearEQ to be "complete", and much of that is not DSP-related at all (indeed most of the DSP is ready to go).
 
