@@ -111,6 +111,12 @@ void BiLinearFilters<SampleType>::prepare(juce::dsp::ProcessSpec& spec)
 }
 
 template <typename SampleType>
+void BiLinearFilters<SampleType>::reset()
+{
+    reset(static_cast<SampleType>(0.0));
+}
+
+template <typename SampleType>
 void BiLinearFilters<SampleType>::reset(SampleType initialValue)
 {
     for (auto v : { &Wn_1, &Xn_1, &Yn_1, })
