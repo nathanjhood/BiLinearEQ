@@ -29,7 +29,7 @@ public:
 
     //==========================================================================
     /** Initialises the processor. */
-    void prepare();
+    void prepare(juce::dsp::ProcessSpec& spec);
 
     /** Resets the internal state variables of the processor. */
     void reset();
@@ -50,26 +50,34 @@ private:
 
     //==========================================================================
     /** Instantiate objects. */
-    juce::dsp::ProcessSpec spec;
-    BiLinearFilters<SampleType> hpFilter, lpFilter, lsFilter, hsFilter;
+    //juce::dsp::ProcessSpec spec;
+    //BiLinearFilters<SampleType> hpFilter, lpFilter, lsFilter, hsFilter;
     juce::dsp::DryWetMixer<SampleType> mixer;
     juce::dsp::Gain<SampleType> output;
+
+    using filter = BiLinearFilters<SampleType>;
+
+    enum chainIndexes
+    {
+        highPass,
+        lowShelf,
+        highShelf,
+        lowPass
+    };
+
+    juce::dsp::ProcessorChain<filter, filter, filter, filter> filterChain;
 
     //==========================================================================
     /** Parameter pointers. */
     juce::AudioParameterFloat* outputPtr { nullptr };
     juce::AudioParameterFloat* mixPtr { nullptr };
     juce::AudioParameterBool* bypassPtr { nullptr };
-
     juce::AudioParameterFloat* hpFreqPtr { nullptr };
-
     juce::AudioParameterFloat* lsFreqPtr { nullptr };
     juce::AudioParameterFloat* lsGainPtr { nullptr };
-
     juce::AudioParameterFloat* hsFreqPtr { nullptr };
     juce::AudioParameterFloat* hsGainPtr { nullptr };
-
-    juce::AudioParameterFloat* lpFreqPtr{ nullptr };
+    juce::AudioParameterFloat* lpFreqPtr { nullptr };
 
     //==========================================================================
     /** Init variables. */
