@@ -116,8 +116,11 @@ void BiLinearEQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
 
     getProcessingPrecision();
 
-    processorFloat.prepare();
-    processorDouble.prepare();
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = samplesPerBlock;
+
+    processorFloat.prepare(getSpec());
+    processorDouble.prepare(getSpec());
 }
 
 void BiLinearEQAudioProcessor::releaseResources()
@@ -133,24 +136,24 @@ void BiLinearEQAudioProcessor::numChannelsChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
-    processorFloat.prepare();
-    processorDouble.prepare();
+    processorFloat.prepare(getSpec());
+    processorDouble.prepare(getSpec());
 }
 
 void BiLinearEQAudioProcessor::numBusesChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
-    processorFloat.prepare();
-    processorDouble.prepare();
+    processorFloat.prepare(getSpec());
+    processorDouble.prepare(getSpec());
 }
 
 void BiLinearEQAudioProcessor::processorLayoutsChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
-    processorFloat.prepare();
-    processorDouble.prepare();
+    processorFloat.prepare(getSpec());
+    processorDouble.prepare(getSpec());
 }
 
 bool BiLinearEQAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
