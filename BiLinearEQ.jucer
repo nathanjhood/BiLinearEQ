@@ -8,18 +8,9 @@
   <MAINGROUP id="jYY1dR" name="BiLinearEQ">
     <GROUP id="{C6D058D9-8AFB-6807-F395-504E03AE2A73}" name="Source">
       <GROUP id="{A788D5D8-1543-C4C9-5BEA-AA5E7F923F17}" name="Components">
-        <FILE id="URfaTS" name="AutoButton.cpp" compile="1" resource="0" file="Source/Components/AutoButton.cpp"/>
-        <FILE id="lqykc4" name="AutoButton.h" compile="0" resource="0" file="Source/Components/AutoButton.h"/>
-        <FILE id="UWcTTJ" name="AutoComboBox.cpp" compile="1" resource="0"
-              file="Source/Components/AutoComboBox.cpp"/>
-        <FILE id="yDUMik" name="AutoComboBox.h" compile="0" resource="0" file="Source/Components/AutoComboBox.h"/>
         <FILE id="EWFkeX" name="AutoComponent.cpp" compile="1" resource="0"
               file="Source/Components/AutoComponent.cpp"/>
         <FILE id="MnpHIh" name="AutoComponent.h" compile="0" resource="0" file="Source/Components/AutoComponent.h"/>
-        <FILE id="jR1Hre" name="AutoFader.cpp" compile="1" resource="0" file="Source/Components/AutoFader.cpp"/>
-        <FILE id="qQaLMY" name="AutoFader.h" compile="0" resource="0" file="Source/Components/AutoFader.h"/>
-        <FILE id="CVVTMm" name="AutoKnob.cpp" compile="1" resource="0" file="Source/Components/AutoKnob.cpp"/>
-        <FILE id="qSUIdW" name="AutoKnob.h" compile="0" resource="0" file="Source/Components/AutoKnob.h"/>
         <FILE id="BgYUD0" name="AutoLambdas.cpp" compile="1" resource="0" file="Source/Components/AutoLambdas.cpp"/>
         <FILE id="LvejT4" name="AutoLambdas.h" compile="0" resource="0" file="Source/Components/AutoLambdas.h"/>
       </GROUP>
