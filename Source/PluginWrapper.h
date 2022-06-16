@@ -34,12 +34,24 @@ public:
     /** Resets the internal state variables of the processor. */
     void reset();
 
+    //==============================================================================
+    /** Sets the length of the ramp used for smoothing parameter changes. */
+    void setRampDurationSeconds(double newDurationSeconds) noexcept;
+
+    /** Returns the ramp duration in seconds. */
+    double getRampDurationSeconds() const noexcept;
+
+    /** Returns true if the current value is currently being interpolated. */
+    bool isSmoothing() const noexcept;
+
     //==========================================================================
     void process(juce::AudioBuffer<SampleType>& buffer, juce::MidiBuffer& midiMessages);
 
     //==========================================================================
     /** Updates the internal state variables of the processor. */
     void update();
+
+    double rampDurationSeconds = 0.00005;
 
 private:
     //==========================================================================
@@ -50,8 +62,6 @@ private:
 
     //==========================================================================
     /** Instantiate objects. */
-    //juce::dsp::ProcessSpec spec;
-    //BiLinearFilters<SampleType> hpFilter, lpFilter, lsFilter, hsFilter;
     juce::dsp::DryWetMixer<SampleType> mixer;
     juce::dsp::Gain<SampleType> output;
 
@@ -66,6 +76,16 @@ private:
     };
 
     juce::dsp::ProcessorChain<filter, filter, filter, filter> filterChain;
+
+    //==========================================================================
+    /** Parameter smoothers. */
+
+    juce::SmoothedValue<SampleType, juce::ValueSmoothingTypes::Multiplicative> hpFrq;
+    juce::SmoothedValue<SampleType, juce::ValueSmoothingTypes::Multiplicative> lpFrq;
+    juce::SmoothedValue<SampleType, juce::ValueSmoothingTypes::Multiplicative> hsFrq;
+    juce::SmoothedValue<SampleType, juce::ValueSmoothingTypes::Multiplicative> lsFrq;
+    juce::SmoothedValue<SampleType, juce::ValueSmoothingTypes::Linear> hsLev;
+    juce::SmoothedValue<SampleType, juce::ValueSmoothingTypes::Linear> lsLev;
 
     //==========================================================================
     /** Parameter pointers. */

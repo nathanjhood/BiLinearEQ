@@ -35,16 +35,6 @@ ProcessWrapper<SampleType>::ProcessWrapper(BiLinearEQAudioProcessor& p, APVTS& a
     jassert(hpFreqPtr != nullptr);
     jassert(lpFreqPtr != nullptr);
 
-    /*hpFilter.setFilterType(FilterType::highPass);
-    lsFilter.setFilterType(FilterType::lowShelf);
-    hsFilter.setFilterType(FilterType::highShelf);
-    lpFilter.setFilterType(FilterType::lowPass);
-
-    hpFilter.setTransformType(TransformationType::directFormIItransposed);
-    lsFilter.setTransformType(TransformationType::directFormIItransposed);
-    hsFilter.setTransformType(TransformationType::directFormIItransposed);
-    lpFilter.setTransformType(TransformationType::directFormIItransposed);*/
-
     auto& hp = filterChain.template get<chainIndexes::highPass>();
     hp.setFrequency(hpFreqPtr->get());
     hp.setFilterType(FilterType::highPass);
@@ -68,6 +58,31 @@ ProcessWrapper<SampleType>::ProcessWrapper(BiLinearEQAudioProcessor& p, APVTS& a
     hs.setTransformType(TransformationType::directFormIItransposed);
 }
 
+//==============================================================================
+template <typename SampleType>
+void ProcessWrapper<SampleType>::setRampDurationSeconds(double newDurationSeconds) noexcept
+{
+    if (rampDurationSeconds != newDurationSeconds)
+    {
+        rampDurationSeconds = newDurationSeconds;
+        reset();
+    }
+}
+
+template <typename SampleType>
+double ProcessWrapper<SampleType>::getRampDurationSeconds() const noexcept
+{
+    return rampDurationSeconds;
+}
+
+template <typename SampleType>
+bool ProcessWrapper<SampleType>::isSmoothing() const noexcept
+{
+    bool isSmoothing = hpFrq.isSmoothing() || lpFrq.isSmoothing() || lsLev.isSmoothing() || hsLev.isSmoothing();
+
+    return isSmoothing;
+}
+
 template <typename SampleType>
 void ProcessWrapper<SampleType>::prepare(juce::dsp::ProcessSpec& spec)
 {
@@ -76,11 +91,6 @@ void ProcessWrapper<SampleType>::prepare(juce::dsp::ProcessSpec& spec)
     spec.numChannels = audioProcessor.getTotalNumInputChannels();
 
     mixer.prepare(spec);
-    /*hpFilter.prepare(spec);
-    lsFilter.prepare(spec);
-    hsFilter.prepare(spec);
-    lpFilter.prepare(spec);*/
-    //filterChain.prepare(spec);
 
     auto& lp = filterChain.template get<chainIndexes::lowPass>();
     lp.prepare(spec);
@@ -104,10 +114,6 @@ template <typename SampleType>
 void ProcessWrapper<SampleType>::reset()
 {
     mixer.reset();
-    /*hpFilter.reset(static_cast<SampleType>(0.0));
-    lsFilter.reset(static_cast<SampleType>(0.0));
-    hsFilter.reset(static_cast<SampleType>(0.0));
-    lpFilter.reset(static_cast<SampleType>(0.0));*/
     filterChain.reset();
     output.reset();
 }
@@ -128,11 +134,6 @@ void ProcessWrapper<SampleType>::process(juce::AudioBuffer<SampleType>& buffer, 
 
     context.isBypassed = bypassPtr->get();
 
-    /*hpFilter.process(context);
-    lsFilter.process(context);
-    hsFilter.process(context);
-    lpFilter.process(context);*/
-
     filterChain.process(context);
 
     output.process(context);
@@ -148,13 +149,6 @@ void ProcessWrapper<SampleType>::update()
     spec.numChannels = audioProcessor.getTotalNumInputChannels();*/
 
     mixer.setWetMixProportion(mixPtr->get() * 0.01f);
-
-    /*hpFilter.setFrequency(hpFreqPtr->get());
-    lsFilter.setFrequency(lsFreqPtr->get());
-    hsFilter.setFrequency(hsFreqPtr->get());
-    lpFilter.setFrequency(lpFreqPtr->get());
-    lsFilter.setGain(lsGainPtr->get());
-    hsFilter.setGain(hsGainPtr->get());*/
 
     auto& hp = filterChain.template get<chainIndexes::highPass>();
     hp.setFrequency(hpFreqPtr->get());
