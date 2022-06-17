@@ -12,11 +12,11 @@
 #include "PluginProcessor.h"
 
 template <typename SampleType>
-ProcessWrapper<SampleType>::ProcessWrapper(BiLinearEQAudioProcessor& p, APVTS& apvts) : spec(), audioProcessor(p), state(apvts)
+ProcessWrapper<SampleType>::ProcessWrapper(BiLinearEQAudioProcessor& p, APVTS& apvts, juce::dsp::ProcessSpec& spec) : audioProcessor(p), state(apvts), setup(spec)
 {
-    spec.sampleRate = audioProcessor.getSampleRate();
-    spec.maximumBlockSize = audioProcessor.getBlockSize();
-    spec.numChannels = audioProcessor.getTotalNumInputChannels();
+    setup.sampleRate = audioProcessor.getSampleRate();
+    setup.maximumBlockSize = audioProcessor.getBlockSize();
+    setup.numChannels = audioProcessor.getTotalNumInputChannels();
 
     bypassPtr = dynamic_cast <juce::AudioParameterBool*> (state.getParameter("bypassID"));
     precisionPtr = dynamic_cast <juce::AudioParameterChoice*> (state.getParameter("precisionID"));
@@ -53,7 +53,7 @@ ProcessWrapper<SampleType>::ProcessWrapper(BiLinearEQAudioProcessor& p, APVTS& a
 
 //==============================================================================
 template <typename SampleType>
-void ProcessWrapper<SampleType>::prepare()
+void ProcessWrapper<SampleType>::prepare(juce::dsp::ProcessSpec& spec)
 {
     spec.sampleRate = audioProcessor.getSampleRate();
     spec.maximumBlockSize = audioProcessor.getBlockSize();
@@ -111,12 +111,11 @@ void ProcessWrapper<SampleType>::process(juce::AudioBuffer<SampleType>& buffer, 
 template <typename SampleType>
 void ProcessWrapper<SampleType>::update()
 {
-    spec.sampleRate = audioProcessor.getSampleRate();
-    spec.maximumBlockSize = audioProcessor.getBlockSize();
-    spec.numChannels = audioProcessor.getTotalNumInputChannels();
+    setup.sampleRate = audioProcessor.getSampleRate();
+    setup.maximumBlockSize = audioProcessor.getBlockSize();
+    setup.numChannels = audioProcessor.getTotalNumInputChannels();
 
     audioProcessor.setBypassParameter(bypassPtr);
-    audioProcessor.setProcessingPrecision(static_cast<juce::AudioProcessor::ProcessingPrecision>(precisionPtr->getIndex()));
 
     mixer.setWetMixProportion(drywetPtr->get() * 0.01f);
 

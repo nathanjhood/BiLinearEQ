@@ -31,7 +31,7 @@ void Parameters::setParameterLayout(Params& params)
     const auto percentage = juce::String { ( "%"  ) };
     const auto inOut = juce::String { ("IO") };
 
-    const auto pString = juce::StringArray{ "Floats", "Doubles" };
+    //const auto pString = juce::StringArray{ "Floats", "Doubles" };
 
     const auto genParam = juce::AudioProcessorParameter::genericParameter;
     const auto inMeter = juce::AudioProcessorParameter::inputMeter;
@@ -61,8 +61,8 @@ void Parameters::setParameterLayout(Params& params)
             //==================================================================
             std::make_unique<juce::AudioParameterFloat>("outputID", "Output", outputRange, 00.00f, decibels, genParam),
             std::make_unique<juce::AudioParameterFloat>("mixID", "Mix", mixRange, 100.00f, percentage, genParam),
-            std::make_unique<juce::AudioParameterBool>("bypassID", "Bypass", false),
-            std::make_unique<juce::AudioParameterChoice>("precisionID", "Precision", pString, 1)
+            std::make_unique<juce::AudioParameterBool>("bypassID", "Bypass", false)/*,
+            std::make_unique<juce::AudioParameterChoice>("precisionID", "Precision", pString, 1)*/
             //==================================================================
             ));
 }
