@@ -75,8 +75,6 @@ public:
     /** Initialises the processor. */
     void prepare(juce::dsp::ProcessSpec& spec);
 
-    void reset();
-
     /** Resets the internal state variables of the processor. */
     void reset(SampleType initialValue);
 

@@ -15,8 +15,9 @@ BiLinearEQAudioProcessor::BiLinearEQAudioProcessor() :
                                     .withOutput("Output",   juce::AudioChannelSet::stereo(), true)),
     apvts (*this, &undoManager, "Parameters", createParameterLayout())
 {
-    bypassPtr = static_cast <juce::AudioParameterBool*>(apvts.getParameter("bypassID"));
-    jassert(bypassPtr != nullptr);
+    //precisionPtr = static_cast <juce::AudioParameterChoice*>(apvts.getParameter("precisionID"));
+
+    //jassert(precisionPtr != nullptr);
 }
 
 BiLinearEQAudioProcessor::~BiLinearEQAudioProcessor()
@@ -27,6 +28,22 @@ BiLinearEQAudioProcessor::~BiLinearEQAudioProcessor()
 juce::AudioProcessorParameter* BiLinearEQAudioProcessor::getBypassParameter() const
 {
     return bypassPtr;
+}
+
+bool BiLinearEQAudioProcessor::isBypassed() const noexcept
+{
+    return bypassPtr->get() == true;
+}
+
+void BiLinearEQAudioProcessor::setBypassParameter(juce::AudioParameterBool* newBypass) noexcept
+{
+    if (bypassPtr != newBypass)
+    {
+        bypassPtr = newBypass;
+        /*releaseResources();
+        reset();*/
+    }
+
 }
 
 bool BiLinearEQAudioProcessor::supportsDoublePrecisionProcessing() const
@@ -46,6 +63,10 @@ bool BiLinearEQAudioProcessor::isUsingDoublePrecision() const noexcept
 
 void BiLinearEQAudioProcessor::setProcessingPrecision(ProcessingPrecision newPrecision) noexcept
 {
+    // If you hit this assertion then you're trying to use double precision
+    // processing on a processor which does not support it!
+    jassert(newPrecision != doublePrecision || supportsDoublePrecisionProcessing());
+
     if (processingPrecision != newPrecision)
     {
         processingPrecision = newPrecision;
@@ -116,11 +137,8 @@ void BiLinearEQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
 
     getProcessingPrecision();
 
-    spec.sampleRate = sampleRate;
-    spec.maximumBlockSize = samplesPerBlock;
-
-    processorFloat.prepare(getSpec());
-    processorDouble.prepare(getSpec());
+    processorFloat.prepare();
+    processorDouble.prepare();
 }
 
 void BiLinearEQAudioProcessor::releaseResources()
@@ -136,24 +154,24 @@ void BiLinearEQAudioProcessor::numChannelsChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
-    processorFloat.prepare(getSpec());
-    processorDouble.prepare(getSpec());
+    processorFloat.prepare();
+    processorDouble.prepare();
 }
 
 void BiLinearEQAudioProcessor::numBusesChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
-    processorFloat.prepare(getSpec());
-    processorDouble.prepare(getSpec());
+    processorFloat.prepare();
+    processorDouble.prepare();
 }
 
 void BiLinearEQAudioProcessor::processorLayoutsChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
-    processorFloat.prepare(getSpec());
-    processorDouble.prepare(getSpec());
+    processorFloat.prepare();
+    processorDouble.prepare();
 }
 
 bool BiLinearEQAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
@@ -176,6 +194,8 @@ bool BiLinearEQAudioProcessor::isBusesLayoutSupported (const BusesLayout& layout
 //==============================================================================
 void BiLinearEQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+    getProcessingPrecision();
+
     if (bypassPtr->get() == false)
     {
         juce::ScopedNoDenormals noDenormals;
@@ -191,6 +211,10 @@ void BiLinearEQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
 
 void BiLinearEQAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
 {
+    //setProcessingPrecision(static_cast<ProcessingPrecision>(precisionPtr->getIndex()));
+
+    getProcessingPrecision();
+
     if (bypassPtr->get() == false)
     {
         juce::ScopedNoDenormals noDenormals;
@@ -203,18 +227,30 @@ void BiLinearEQAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, j
         processBlockBypassed(buffer, midiMessages);
     }
     
+    // If you hit this assertion then either the caller called the double
+    // precision version of processBlock on a processor which does not support it
+    // (i.e. supportsDoublePrecisionProcessing() returns false), or the implementation
+    // of the AudioProcessor forgot to override the double precision version of this method
+    jassertfalse;
+
 }
 
 void BiLinearEQAudioProcessor::processBlockBypassed(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    juce::ignoreUnused(buffer);
-    juce::ignoreUnused(midiMessages);
+    //setProcessingPrecision(static_cast<ProcessingPrecision>(precisionPtr->getIndex()));
+
+    getProcessingPrecision();
+
+    juce::ignoreUnused(buffer, midiMessages);
 }
 
 void BiLinearEQAudioProcessor::processBlockBypassed(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
 {
-    juce::ignoreUnused(buffer);
-    juce::ignoreUnused(midiMessages);
+    //setProcessingPrecision(static_cast<ProcessingPrecision>(precisionPtr->getIndex()));
+
+    getProcessingPrecision();
+
+    juce::ignoreUnused(buffer, midiMessages);
 }
 
 //==============================================================================

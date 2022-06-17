@@ -26,6 +26,8 @@ public:
 
     //==========================================================================
     juce::AudioProcessorParameter* getBypassParameter() const override;
+    bool isBypassed() const noexcept;
+    void setBypassParameter(juce::AudioParameterBool* newBypass) noexcept;
     bool supportsDoublePrecisionProcessing() const override;
     ProcessingPrecision getProcessingPrecision() const noexcept;
     bool isUsingDoublePrecision() const noexcept;
@@ -79,14 +81,9 @@ public:
     APVTS& getAPVTS() { return apvts; };
     static APVTS::ParameterLayout createParameterLayout();
 
-    juce::dsp::ProcessSpec spec;
-    juce::dsp::ProcessSpec& getSpec() { return spec; };
-
 private:
     //==========================================================================
     /** Audio processor members. */
-    
-
     Parameters parameters { *this, getAPVTS() };
     ProcessWrapper<float> processorFloat { *this, getAPVTS() };
     ProcessWrapper<double> processorDouble { *this, getAPVTS() };
