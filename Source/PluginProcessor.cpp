@@ -13,7 +13,10 @@
 BiLinearEQAudioProcessor::BiLinearEQAudioProcessor() :
     AudioProcessor(BusesProperties().withInput("Input",     juce::AudioChannelSet::stereo(), true)
                                     .withOutput("Output",   juce::AudioChannelSet::stereo(), true)),
-    apvts (*this, &undoManager, "Parameters", createParameterLayout())
+    apvts ( *this, &undoManager, "Parameters", createParameterLayout() ),
+    parameters ( *this, getAPVTS() ),
+    processorFloat ( *this, getAPVTS(), getSpec() ),
+    processorDouble ( *this, getAPVTS(), getSpec() )
 {
 }
 
@@ -134,8 +137,8 @@ void BiLinearEQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
 
     getProcessingPrecision();
 
-    processorFloat.prepare();
-    processorDouble.prepare();
+    processorFloat.prepare(spec);
+    processorDouble.prepare(spec);
 }
 
 void BiLinearEQAudioProcessor::releaseResources()
@@ -157,24 +160,24 @@ void BiLinearEQAudioProcessor::numChannelsChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
-    processorFloat.prepare();
-    processorDouble.prepare();
+    processorFloat.prepare(spec);
+    processorDouble.prepare(spec);
 }
 
 void BiLinearEQAudioProcessor::numBusesChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
-    processorFloat.prepare();
-    processorDouble.prepare();
+    processorFloat.prepare(spec);
+    processorDouble.prepare(spec);
 }
 
 void BiLinearEQAudioProcessor::processorLayoutsChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
-    processorFloat.prepare();
-    processorDouble.prepare();
+    processorFloat.prepare(spec);
+    processorDouble.prepare(spec);
 }
 
 bool BiLinearEQAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
@@ -214,8 +217,6 @@ void BiLinearEQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
 
 void BiLinearEQAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
 {
-    //setProcessingPrecision(static_cast<ProcessingPrecision>(precisionPtr->getIndex()));
-
     getProcessingPrecision();
 
     if (bypassPtr->get() == false)
@@ -240,8 +241,6 @@ void BiLinearEQAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, j
 
 void BiLinearEQAudioProcessor::processBlockBypassed(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    //setProcessingPrecision(static_cast<ProcessingPrecision>(precisionPtr->getIndex()));
-
     getProcessingPrecision();
 
     juce::ignoreUnused(buffer, midiMessages);
@@ -249,8 +248,6 @@ void BiLinearEQAudioProcessor::processBlockBypassed(juce::AudioBuffer<float>& bu
 
 void BiLinearEQAudioProcessor::processBlockBypassed(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
 {
-    //setProcessingPrecision(static_cast<ProcessingPrecision>(precisionPtr->getIndex()));
-
     getProcessingPrecision();
 
     juce::ignoreUnused(buffer, midiMessages);
