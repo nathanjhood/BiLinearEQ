@@ -79,9 +79,6 @@ public:
     APVTS& getAPVTS() { return apvts; };
     static APVTS::ParameterLayout createParameterLayout();
 
-    juce::dsp::ProcessSpec spec;
-    juce::dsp::ProcessSpec& getSpec() { return spec; };
-
 private:
     //==========================================================================
     /** Audio processor members. */
