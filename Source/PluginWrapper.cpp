@@ -12,15 +12,16 @@
 #include "PluginProcessor.h"
 
 template <typename SampleType>
-ProcessWrapper<SampleType>::ProcessWrapper(BiLinearEQAudioProcessor& p, APVTS& apvts) : audioProcessor(p), state(apvts)
+ProcessWrapper<SampleType>::ProcessWrapper(BiLinearEQAudioProcessor& p, APVTS& apvts) : spec(), audioProcessor(p), state(apvts)
 {
-    getSpec().sampleRate = audioProcessor.getSampleRate();
-    getSpec().maximumBlockSize = audioProcessor.getBlockSize();
-    getSpec().numChannels = audioProcessor.getTotalNumInputChannels();
+    spec.sampleRate = audioProcessor.getSampleRate();
+    spec.maximumBlockSize = audioProcessor.getBlockSize();
+    spec.numChannels = audioProcessor.getTotalNumInputChannels();
 
-    outputPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("outputID"));
-    mixPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("mixID"));
     bypassPtr = dynamic_cast <juce::AudioParameterBool*> (state.getParameter("bypassID"));
+    precisionPtr = dynamic_cast <juce::AudioParameterChoice*> (state.getParameter("precisionID"));
+    outputPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("outputID"));
+    drywetPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("mixID"));
     hpFreqPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("hpFrequencyID"));
     lsFreqPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("lsFrequencyID"));
     lsGainPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("lsGainID"));
@@ -28,9 +29,10 @@ ProcessWrapper<SampleType>::ProcessWrapper(BiLinearEQAudioProcessor& p, APVTS& a
     hsGainPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("hsGainID"));
     lpFreqPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("lpFrequencyID"));
 
-    jassert(outputPtr != nullptr);
-    jassert(mixPtr != nullptr);
     jassert(bypassPtr != nullptr);
+    jassert(precisionPtr != nullptr);
+    jassert(outputPtr != nullptr);
+    jassert(drywetPtr != nullptr);
     jassert(hpFreqPtr != nullptr);
     jassert(lsFreqPtr != nullptr);
     jassert(lsGainPtr != nullptr);
@@ -50,20 +52,19 @@ ProcessWrapper<SampleType>::ProcessWrapper(BiLinearEQAudioProcessor& p, APVTS& a
 }
 
 //==============================================================================
-
 template <typename SampleType>
 void ProcessWrapper<SampleType>::prepare()
 {
-    getSpec().sampleRate = audioProcessor.getSampleRate();
-    getSpec().maximumBlockSize = audioProcessor.getBlockSize();
-    getSpec().numChannels = audioProcessor.getTotalNumInputChannels();
+    spec.sampleRate = audioProcessor.getSampleRate();
+    spec.maximumBlockSize = audioProcessor.getBlockSize();
+    spec.numChannels = audioProcessor.getTotalNumInputChannels();
 
     mixer.prepare(spec);
 
-    hpFilter.prepare(getSpec());
-    lsFilter.prepare(getSpec());
-    hsFilter.prepare(getSpec());
-    lpFilter.prepare(getSpec());
+    hpFilter.prepare(spec);
+    lsFilter.prepare(spec);
+    hsFilter.prepare(spec);
+    lpFilter.prepare(spec);
 
     output.prepare(spec);
 
@@ -110,11 +111,14 @@ void ProcessWrapper<SampleType>::process(juce::AudioBuffer<SampleType>& buffer, 
 template <typename SampleType>
 void ProcessWrapper<SampleType>::update()
 {
-    getSpec().sampleRate = audioProcessor.getSampleRate();
-    getSpec().maximumBlockSize = audioProcessor.getBlockSize();
-    getSpec().numChannels = audioProcessor.getTotalNumInputChannels();
+    spec.sampleRate = audioProcessor.getSampleRate();
+    spec.maximumBlockSize = audioProcessor.getBlockSize();
+    spec.numChannels = audioProcessor.getTotalNumInputChannels();
 
-    mixer.setWetMixProportion(mixPtr->get() * 0.01f);
+    audioProcessor.setBypassParameter(bypassPtr);
+    audioProcessor.setProcessingPrecision(static_cast<juce::AudioProcessor::ProcessingPrecision>(precisionPtr->getIndex()));
+
+    mixer.setWetMixProportion(drywetPtr->get() * 0.01f);
 
     hpFilter.setFrequency(hpFreqPtr->get());
     lsFilter.setFrequency(lsFreqPtr->get());

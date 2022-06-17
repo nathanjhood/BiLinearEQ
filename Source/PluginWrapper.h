@@ -41,6 +41,9 @@ public:
     /** Updates the internal state variables of the processor. */
     void update();
 
+    juce::dsp::ProcessSpec spec;
+    juce::dsp::ProcessSpec& getSpec() { return spec; };
+
 private:
     //==========================================================================
     // This reference is provided as a quick way for the wrapper to
@@ -50,18 +53,16 @@ private:
 
     //==========================================================================
     /** Instantiate objects. */
-    juce::dsp::ProcessSpec spec;
-    juce::dsp::ProcessSpec& getSpec() { return spec; };
-
     juce::dsp::DryWetMixer<SampleType> mixer;
     BiLinearFilters<SampleType> hpFilter, lsFilter, hsFilter, lpFilter;
     juce::dsp::Gain<SampleType> output;
 
     //==========================================================================
     /** Parameter pointers. */
-    juce::AudioParameterFloat* outputPtr { nullptr };
-    juce::AudioParameterFloat* mixPtr { nullptr };
     juce::AudioParameterBool* bypassPtr { nullptr };
+    juce::AudioParameterChoice* precisionPtr { nullptr };
+    juce::AudioParameterFloat* outputPtr { nullptr };
+    juce::AudioParameterFloat* drywetPtr { nullptr };
     juce::AudioParameterFloat* hpFreqPtr { nullptr };
     juce::AudioParameterFloat* lsFreqPtr { nullptr };
     juce::AudioParameterFloat* lsGainPtr { nullptr };
