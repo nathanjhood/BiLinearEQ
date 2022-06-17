@@ -33,10 +33,10 @@ void Parameters::setParameterLayout(Params& params)
 
     //const auto pString = juce::StringArray{ "Floats", "Doubles" };
 
-    const auto genParam = juce::AudioProcessorParameter::genericParameter;
-    const auto inMeter = juce::AudioProcessorParameter::inputMeter;
-    const auto outParam = juce::AudioProcessorParameter::outputGain;
-    const auto outMeter = juce::AudioProcessorParameter::outputMeter;
+    const auto genParam = juce::AudioProcessorParameter::Category::genericParameter;;
+    const auto inMeter = juce::AudioProcessorParameter::Category::inputMeter;
+    const auto outParam = juce::AudioProcessorParameter::Category::outputGain;
+    const auto outMeter = juce::AudioProcessorParameter::Category::outputMeter;
     
     juce::ignoreUnused(inMeter);
     juce::ignoreUnused(outParam);
