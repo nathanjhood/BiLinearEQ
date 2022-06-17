@@ -34,8 +34,9 @@ public:
     void setProcessingPrecision(ProcessingPrecision newPrecision) noexcept;
 
     //==========================================================================
-    void prepareToPlay(double sampleRate, int samplesPerBlock) override;
+    void prepareToPlay(double currentSampleRate, int samplesPerBlock) override;
     void releaseResources() override;
+    void reset() override;
     
     void numChannelsChanged() override;
     void numBusesChanged() override;

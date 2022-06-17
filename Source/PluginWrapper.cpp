@@ -116,7 +116,6 @@ void ProcessWrapper<SampleType>::update()
     spec.numChannels = audioProcessor.getTotalNumInputChannels();
 
     audioProcessor.setBypassParameter(bypassPtr);
-    audioProcessor.setProcessingPrecision(static_cast<juce::AudioProcessor::ProcessingPrecision>(precisionPtr->getIndex()));
 
     mixer.setWetMixProportion(drywetPtr->get() * 0.01f);
 

@@ -15,9 +15,6 @@ BiLinearEQAudioProcessor::BiLinearEQAudioProcessor() :
                                     .withOutput("Output",   juce::AudioChannelSet::stereo(), true)),
     apvts (*this, &undoManager, "Parameters", createParameterLayout())
 {
-    //precisionPtr = static_cast <juce::AudioParameterChoice*>(apvts.getParameter("precisionID"));
-
-    //jassert(precisionPtr != nullptr);
 }
 
 BiLinearEQAudioProcessor::~BiLinearEQAudioProcessor()
@@ -40,8 +37,8 @@ void BiLinearEQAudioProcessor::setBypassParameter(juce::AudioParameterBool* newB
     if (bypassPtr != newBypass)
     {
         bypassPtr = newBypass;
-        /*releaseResources();
-        reset();*/
+        releaseResources();
+        reset();
     }
 
 }
@@ -146,6 +143,12 @@ void BiLinearEQAudioProcessor::releaseResources()
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 
+    processorFloat.reset();
+    processorDouble.reset();
+}
+
+void BiLinearEQAudioProcessor::reset()
+{
     processorFloat.reset();
     processorDouble.reset();
 }
