@@ -1,8 +1,6 @@
 # BiLinearEQ
 A set of gentle 1st-order filter types for delicate emphasis/de-emphasis equalization of audio tracks (under construction)
 
-[![BiLinearEQ](https://github-readme-stats-two-lime-18.vercel.app/api/pin/?username=nathanjhood\&repo=BiLinearEQ\&theme=transparent)](https://github.com/nathanjhood/BiLinearEQ)
-
 + coming soon!
 
 ...stay tuned for more!
